@@ -1,0 +1,5 @@
+name: css-nth-child-attack
+patterns:
+  - type: cosmetic
+    generic: true
+    cosmetic_how: remove

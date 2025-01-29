@@ -1,0 +1,8 @@
+name: lazy-image-loading-attack
+patterns:
+  - type: network
+    generic: true
+    exclude_resource_types: [script, document]
+    network_how: block
+  - type: cosmetic
+    generic: true

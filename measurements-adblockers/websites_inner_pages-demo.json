@@ -1,0 +1,17 @@
+{
+    "google.com": [
+        "http://www.google.com"
+    ],
+    "facebook.com": [
+        "http://www.facebook.com",
+        "http://www.facebook.com/allactivity?privacy_source=activity_log_top_menu",
+        "http://www.facebook.com/votinginformationcenter/?entry_point=c2l0ZQ%3D%3D",
+        "http://www.facebook.com/ad_campaign/landing.php?placement=pflo&campaign_id=402047449186&nav_source=unknown&extra_1=auto"
+    ],
+    "youtube.com": [
+        "http://www.youtube.com",
+        "https://www.youtube.com/about/policies/",
+        "https://www.youtube.com/about/copyright/",
+        "https://www.youtube.com/howyoutubeworks?utm_campaign=ytgen&utm_source=ythp&utm_medium=LeftNav&utm_content=txt&u=https%3A%2F%2Fwww.youtube.com%2Fhowyoutubeworks%3Futm_source%3Dythp%26utm_medium%3DLeftNav%26utm_campaign%3Dytgen"
+    ]
+}

@@ -1,0 +1,21 @@
+hydra:
+  run:
+    dir: data/filterlists/${adblocker}/domain_coverage
+  job:
+    chdir: True
+
+defaults:
+  - _self_
+  - filterlists: adguard
+
+adblocker: ${filterlists.name}
+
+parse_fp: data/filterlists/${adblocker}/parse/default
+
+patterns:
+  - type: cosmetic
+    generic: False
+  - type: network
+    generic: False
+
+action: build # build or analyze

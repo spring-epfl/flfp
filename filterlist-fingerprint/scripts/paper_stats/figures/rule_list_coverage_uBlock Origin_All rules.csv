@@ -1,0 +1,7 @@
+attack,n_unique_lists,n_list_sets,n_allowed_rules
+All rules,66,282,585536 (100.00%)
+Generic rules,63,216,354840 (60.60%)
+Generic network rules,63,197,293390 (50.11%)
+Generic cosmetic rules,54,98,61450 (10.49%)
+Baseline attack,65,280,583267 (99.61%)
+CSS animation attack (+ others),63,212,336332 (57.44%)

@@ -1,0 +1,70 @@
+{
+  "extensionDescription": {
+    "message": "Bảo vệ bạn khỏi bị theo dõi thông qua việc phân phối nội dung \"miễn phí\", tập trung.",
+    "description": "Extension description."
+  },
+  "disableProtectionTitle": {
+    "message": "Tắt bảo vệ cho trang này",
+    "description": "Disable protection title."
+  },
+  "enableProtectionTitle": {
+    "message": "Bật bảo vệ",
+    "description": "Enable protection title."
+  },
+  "amountInjectedTitle": {
+    "message": "Đếm các tài nguyên cục bộ được chèn vào",
+    "description": "Amount injected title."
+  },
+  "amountInjectedDescription": {
+    "message": "Số lượng tài nguyên cục bộ đã chèn của mạng phân phối nội dung (CDN) kể từ khi cài đặt.",
+    "description": "Amount injected description."
+  },
+  "optionsTitle": {
+    "message": "Tùy chỉnh",
+    "description": "Options title."
+  },
+  "showIconBadgeTitle": {
+    "message": "Hển thị số lượng chèn trên biểu tượng",
+    "description": "Show icon badge title."
+  },
+  "showIconBadgeDescription": {
+    "message": "Hiển thị số tài nguyên đã chèn trên biểu tượng của tiện ích.",
+    "description": "Show icon badge description."
+  },
+  "blockMissingTitle": {
+    "message": "Chặn yêu cầu cho tài nguyên bị thiếu",
+    "description": "Block requests for missing resources title."
+  },
+  "blockMissingDescription": {
+    "message": "Hủy yêu cầu bị chặn nếu tài nguyên cần tới không có sẵn.",
+    "description": "Block requests for missing resources description."
+  },
+  "disablePrefetchTitle": {
+    "message": "Vô hiệu tìm nạp trước liên kết",
+    "description": "Disable prefetch title."
+  },
+  "disablePrefetchDescription": {
+    "message": "Ngăn chặn các yêu cầu không được phép rò rỉ ra ngoài mạng lưới phân phối.",
+    "description": "Disable prefetch description."
+  },
+  "stripMetadataTitle": {
+    "message": "Loại bỏ siêu dữ liệu (metadata) khỏi các yêu cầu được phép",
+    "description": "Strip metadata title."
+  },
+  "stripMetadataDescription": {
+    "message": "Xóa dữ liệu nhạy cảm khỏi các yêu cầu CDN được phép để cải thiện quyền riêng tư.",
+    "description": "Strip metadata description."
+  },
+  "whitelistedDomainsTitle": {
+    "message": "Loại trừ tên miền khỏi việc giám sát",
+    "description": "Whitelisted domains title."
+  },
+  "whitelistedDomainsDescription": {
+    "message": "Nhập các miền để đưa vào danh sách trắng. Phân tách các mục nhập bằng dấu chấm phẩy (;).",
+    "description": "Whitelisted domains description."
+  },
+  "advancedLabel": {
+    "message": "Nâng cao",
+    "description": "Advanced label."
+  }
+}

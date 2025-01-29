@@ -1,0 +1,9 @@
+name: ublock
+repo: uBlockOrigin/uAssets
+params:
+  # labels: null
+  per_page: 100
+  state: all
+
+# force: true
+# dedup_from: <path to issues dir>

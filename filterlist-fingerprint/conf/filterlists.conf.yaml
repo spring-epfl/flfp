@@ -1,0 +1,29 @@
+hydra:
+  run:
+    dir: data/${hydra.job.name}/${filterlists.name}/${action}/${attack.name}
+  job:
+    chdir: True
+
+defaults:
+  - _self_
+  - filterlists: adguard
+  - attack: default
+
+action: download
+
+# Configuration for parse action
+parse:
+  download_fp: "data/filterlists/${filterlists.name}/download/default" # needs to set it up for the parse action
+  # if it is a list, it will only parse the lists in the name list
+  which: null
+  overwrite: false
+
+# Configuration for fingerprint action
+fingerprint:
+  seed: 43
+  parse_fp: data/filterlists/${filterlists.name}/parse/default # needs to set it up for the fingerprint action
+  issues_fp: data/issues/adguard/2024-02-24
+
+  which: null
+  exclude: []
+  similarity: false

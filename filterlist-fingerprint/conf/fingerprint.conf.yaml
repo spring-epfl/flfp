@@ -1,0 +1,21 @@
+hydra:
+  run:
+    dir: data/${hydra.job.name}/${adblocker}/${attack.name}/${encoding}/${method}
+  sweep:
+    dir: data/${hydra.job.name}/${adblocker}/${attack.name}/${encoding}/${method}
+    subdir: max_size:${general.max_size}
+  job:
+    chdir: True
+
+defaults:
+  - attack: default
+
+encoding: filterlist # filterlist or rule
+method: targeted # targeted or general
+adblocker: adguard
+source_dir: data/filterlists/${adblocker}/fingerprint/${attack.name}
+
+wandb: false
+
+general:
+  max_size: 10

@@ -1,0 +1,14 @@
+hydra:
+  run:
+    dir: data/fingerprinting/${adblocker}/${attack.name}/filterlist/summary
+  job:
+    chdir: True
+
+defaults:
+  - _self_
+  - attack: default
+
+adblocker: adguard
+targeted_fingerprint_dir: data/fingerprinting/${adblocker}/${attack.name}/filterlist/targeted
+general_fingerprint_dir: data/fingerprinting/${adblocker}/${attack.name}/filterlist/general
+attack_fingerprint_dir: data/filterlists/${adblocker}/fingerprint/${attack.name}

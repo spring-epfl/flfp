@@ -1,0 +1,11 @@
+name: stat-generic
+patterns:
+  - generic: true
+    type: network
+    network_how: block
+  - generic: true
+    type: cosmetic
+    cosmetic_how: hide
+  - generic: true
+    type: cosmetic
+    cosmetic_how: remove

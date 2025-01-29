@@ -1,0 +1,21 @@
+hydra:
+  run:
+    dir: data/${hydra.job.name}/${adblocker}/${attack.name}/${encoding}/${method}
+  job:
+    chdir: True
+
+defaults:
+  - _self_
+  - attack: default
+
+encoding: filterlist # for now we just support this encoding
+method: general # for now we just support this method
+source_dir: data/filterlists/${adblocker}/fingerprint/${attack.name}
+filterlist_dir: data/filterlists/${adblocker}/fingerprint/${attack.name}
+fingerprint_dir: data/fingerprinting/${adblocker}/${attack.name}/${encoding}/general/max_size:90
+adblocker: adguard
+
+thresholds:
+  # uniqueness: 0.05
+  entropy: 0.2
+  max_iter: 100

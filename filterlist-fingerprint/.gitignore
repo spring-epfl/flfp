@@ -1,0 +1,14 @@
+*.egg-info
+data
+env
+.env
+__pycache__
+.DS_Store
+*.code-workspace
+**/*/node_modules
+automations
+scripts/benchmark/*.json
+scripts/figures/*
+scripts/*/scratch.ipynb
+*.npy
+*.zip

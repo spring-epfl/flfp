@@ -1,0 +1,70 @@
+{
+  "extensionDescription": {
+    "message": "Us protegeix contra el seguiment mitjançant un lliurament de contingut \"gratuït\" i centralitzat.",
+    "description": "Extension description."
+  },
+  "disableProtectionTitle": {
+    "message": "Deshabilitar protecció per aquest lloc",
+    "description": "Disable protection title."
+  },
+  "enableProtectionTitle": {
+    "message": "Habilitar protecció",
+    "description": "Enable protection title."
+  },
+  "amountInjectedTitle": {
+    "message": "Comptador de recursos injectats localment",
+    "description": "Amount injected title."
+  },
+  "amountInjectedDescription": {
+    "message": "Quantitat d'injeccions de recursos locals de xarxes de distribució de continguts des de la instal·lació",
+    "description": "Amount injected description."
+  },
+  "optionsTitle": {
+    "message": "Opcions",
+    "description": "Options title."
+  },
+  "showIconBadgeTitle": {
+    "message": "Mostrar la quantitat d'injeccions a la icona",
+    "description": "Show icon badge title."
+  },
+  "showIconBadgeDescription": {
+    "message": "Mostra el número de recursos injectats a la icona de l'extensió",
+    "description": "Show icon badge description."
+  },
+  "blockMissingTitle": {
+    "message": "Bloqueja peticions per falta de recursos",
+    "description": "Block requests for missing resources title."
+  },
+  "blockMissingDescription": {
+    "message": "Cancel·la les peticions interceptades si el recurs sol·licitat no està disponible localment.",
+    "description": "Block requests for missing resources description."
+  },
+  "disablePrefetchTitle": {
+    "message": "Deshabilitar pre-càrrega d'enllaços",
+    "description": "Disable prefetch title."
+  },
+  "disablePrefetchDescription": {
+    "message": "Prevenir que que les peticions no permeses s'escapin cap a les xarxes de distribució.",
+    "description": "Disable prefetch description."
+  },
+  "stripMetadataTitle": {
+    "message": "Esborrar metadades de peticions permeses",
+    "description": "Strip metadata title."
+  },
+  "stripMetadataDescription": {
+    "message": "Esborrar dades sensibles de peticions CDN autorizades para millorar la privacitat.",
+    "description": "Strip metadata description."
+  },
+  "whitelistedDomainsTitle": {
+    "message": "Excloure dominis de les inspeccions",
+    "description": "Whitelisted domains title."
+  },
+  "whitelistedDomainsDescription": {
+    "message": "Introduir els dominis que seran ignorats. Separar més d'una entrada amb punt i coma (;)",
+    "description": "Whitelisted domains description."
+  },
+  "advancedLabel": {
+    "message": "Avançat",
+    "description": "Advanced label."
+  }
+}

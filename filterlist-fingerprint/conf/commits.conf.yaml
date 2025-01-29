@@ -1,0 +1,28 @@
+hydra:
+  run:
+    dir: data/${hydra.job.name}/${filterlists.name}/${action}/${now:%Y-%m-%d}
+  job:
+    chdir: True
+
+defaults:
+  - filterlists: adguard
+  - forum: adguard
+
+pages_limit: null # Number of commits to scrape 100 per page * 170 pages = 17000 commits
+date_limit: null # Date limit for commits to scrape after this date
+overwrite: False # Overwrite existing commits
+action: history
+
+parse:
+  scrape_fp: null
+
+history:
+  downloads_dir: data/filterlists/${filterlists.name}/download/default
+  attacks_parent_dir: data/fingerprinting/${filterlists.name}
+  attack_type: null # targeted or general
+  deltas: [
+    1,1,1,1,1,1,1, # one week
+    7,7,7, # one month
+    30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+    60, 60, 60, 120, 365, 730
+    ]

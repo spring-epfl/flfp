@@ -1,0 +1,5 @@
+name: css-container-query-attack
+patterns:
+  - type: cosmetic
+    cosmetic_how: hide
+    generic: true

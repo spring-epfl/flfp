@@ -1,0 +1,70 @@
+{
+  "extensionDescription": {
+    "message": "Suojaa sinua \"ilmaisen\", keskitetyn sisällön jakelun välityksellä tapahtuvalta seurannalta.",
+    "description": "Extension description."
+  },
+  "disableProtectionTitle": {
+    "message": "Poista suojaus käytöstä tällä sivustolla",
+    "description": "Disable protection title."
+  },
+  "enableProtectionTitle": {
+    "message": "Ota suojaus käyttöön",
+    "description": "Enable protection title."
+  },
+  "amountInjectedTitle": {
+    "message": "Paikallisesti korvattua resurssia",
+    "description": "Amount injected title."
+  },
+  "amountInjectedDescription": {
+    "message": "Paikallisilla resursseilla korvattujen pyyntöjen määrä asennuksen jälkeen.",
+    "description": "Amount injected description."
+  },
+  "optionsTitle": {
+    "message": "Asetukset",
+    "description": "Options title."
+  },
+  "showIconBadgeTitle": {
+    "message": "Näytä korvausmäärä kuvakkeessa",
+    "description": "Show icon badge title."
+  },
+  "showIconBadgeDescription": {
+    "message": "Näyttää korvattujen resurssien määrän lisäosan kuvakkeessa.",
+    "description": "Show icon badge description."
+  },
+  "blockMissingTitle": {
+    "message": "Estä pyynnöt puuttuviin resursseihin",
+    "description": "Block requests for missing resources title."
+  },
+  "blockMissingDescription": {
+    "message": "Peru kaapattu pyyntö, jos tarvittavaa resurssia ei ole saatavilla paikallisesti.",
+    "description": "Block requests for missing resources description."
+  },
+  "disablePrefetchTitle": {
+    "message": "Poista linkkien esihaku käytöstä",
+    "description": "Disable prefetch title."
+  },
+  "disablePrefetchDescription": {
+    "message": "Estä kiellettyjä pyyntöjä vuotamasta jakeluverkkoihin.",
+    "description": "Disable prefetch description."
+  },
+  "stripMetadataTitle": {
+    "message": "Poista metatiedot sallituista pyynnöistä",
+    "description": "Strip metadata title."
+  },
+  "stripMetadataDescription": {
+    "message": "Poista arkaluontoiset tiedot jakeluverkkojen pyynnöistä yksityisyyden parantamiseksi.",
+    "description": "Strip metadata description."
+  },
+  "whitelistedDomainsTitle": {
+    "message": "Tarkistuksesta poissuljettavat verkkotunnukset",
+    "description": "Whitelisted domains title."
+  },
+  "whitelistedDomainsDescription": {
+    "message": "Syötä verkkotunnukset, joita ei tarkisteta. Erota useat verkkotunnukset puolipisteillä (;).",
+    "description": "Whitelisted domains description."
+  },
+  "advancedLabel": {
+    "message": "Edistynyt",
+    "description": "Advanced label."
+  }
+}

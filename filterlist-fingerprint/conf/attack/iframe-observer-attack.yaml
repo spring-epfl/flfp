@@ -1,0 +1,4 @@
+name: iframe-observer-attack
+patterns:
+  - type: network
+  - type: cosmetic

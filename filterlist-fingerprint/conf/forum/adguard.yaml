@@ -1,0 +1,7 @@
+name: "adguard"
+repo: AdguardTeam/AdguardFilters
+params:
+  labels: "N: AdGuard Browser Extension,"
+  per_page: 100
+  state: all
+bot: "adguard-bot"

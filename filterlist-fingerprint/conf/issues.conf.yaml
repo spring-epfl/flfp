@@ -1,0 +1,12 @@
+hydra:
+  run:
+    dir: data/${hydra.job.name}/${forum.name}/${now:%Y-%m-%d}
+  job:
+    chdir: True
+
+defaults:
+  - forum: adguard
+
+pages_limit: null # Number of issues to scrape 100 per page * 170 pages = 17000 issues
+date_limit: null # Date limit for issues to scrape after this date
+overwrite: False # Overwrite existing issues

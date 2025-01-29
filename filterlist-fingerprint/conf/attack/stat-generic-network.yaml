@@ -1,0 +1,6 @@
+name: stat-generic-network
+patterns:
+  - generic: true
+    type: network
+    network_how: block
+  
