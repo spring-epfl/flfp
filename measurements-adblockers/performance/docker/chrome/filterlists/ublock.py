@@ -2,6 +2,21 @@ import time
 from filterlists.common import wait_until_loaded
 from selenium.webdriver.common.by import By
 
+class DELAYS:
+    POST_ACTIVATE_SCRIPT = 4
+    POST_APPLY_CLICK = 4
+    POST_PAGE_LOAD = 4
+    STALL = 5
+    POST_INTERACT_FOR_DEFAULT = 2
+    
+## SLOWER DELAYS
+## -------------------
+# class DELAYS:
+#     POST_ACTIVATE_SCRIPT = 4
+#     POST_APPLY_CLICK = 4
+#     POST_PAGE_LOAD = 4
+#     STALL = 5
+#     POST_INTERACT_FOR_DEFAULT = 2
 
 def keys_match(a: str, b: str):
     """check if two filter list names are the same, ignoring aliases
@@ -38,13 +53,13 @@ def interact_for_default(webdriver):
         """
     )
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     apply_all_btn = webdriver.find_element(By.ID, "buttonApply")
 
     apply_all_btn.click()
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_APPLY_CLICK)
 
     webdriver.execute_script(
         """
@@ -54,13 +69,13 @@ def interact_for_default(webdriver):
         """
     )
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     apply_all_btn = webdriver.find_element(By.ID, "buttonApply")
 
     apply_all_btn.click()
 
-    time.sleep(4)
+    time.sleep(DELAYS.POST_APPLY_CLICK)
 
     current_activations_after = get_current_activations(webdriver)
 
@@ -86,13 +101,13 @@ def activate_all(webdriver):
         """
     )
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     apply_all_btn = webdriver.find_element(By.ID, "buttonApply")
 
     apply_all_btn.click()
 
-    time.sleep(4)
+    time.sleep(DELAYS.POST_APPLY_CLICK)
 
     all_checked = webdriver.execute_script(
         """
@@ -184,7 +199,7 @@ def activate_by_names(webdriver, names: list[str]):
 
     webdriver.execute_script(script_template, names)
 
-    time.sleep(4)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     current_activations = get_current_activations(webdriver)
 
@@ -261,7 +276,7 @@ def verify_selected(webdriver, extension_id, names: list[str] | bool):
 
     webdriver.get(f"chrome-extension://{extension_id}/3p-filters.html")
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_PAGE_LOAD)
 
     wait_until_loaded(webdriver, 20)
 
@@ -338,19 +353,19 @@ def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
     # open empty page
     webdriver.get("about:blank")
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_PAGE_LOAD)
 
     # open a new tab
     webdriver.implicitly_wait(10)
     webdriver.get(f"chrome-extension://{extension_id}/3p-filters.html")
 
     # keep the page open for a while
-    time.sleep(3)
+    time.sleep(DELAYS.POST_PAGE_LOAD)
 
     if not names:
-        time.sleep(5)
+        time.sleep(DELAYS.STALL)
         interact_for_default(webdriver)
-        time.sleep(2)
+        time.sleep(DELAYS.POST_INTERACT_FOR_DEFAULT)
         return
 
     select_all = isinstance(names, bool) and names
@@ -422,7 +437,7 @@ def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
 
     apply_all_btn.click()
 
-    time.sleep(4)
+    time.sleep(DELAYS.POST_APPLY_CLICK)
 
     verify_selected(webdriver, extension_id, names)
 
