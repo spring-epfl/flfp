@@ -3,6 +3,28 @@ from filterlists.common import wait_until_loaded
 from selenium.webdriver.common.by import By
 
 
+class DELAYS:
+    POST_ACTIVATE_SCRIPT = 3
+    POST_ACCEPT_MODAL = 1
+    PRE_VERIFY = 4
+    IN_MODAL_VERIFY = 1
+    IN_SELECT_STALL = 15
+    PAGE_LOAD_WAIT = 3
+    WAIT_UNTIL_LOADED = 10
+    POST_ACTIVATE_SETTING_BOX = 5
+    
+## SLOWER DELAYS
+## --------------
+# class DELAYS:
+#     POST_ACTIVATE_SCRIPT = 6
+#     POST_ACCEPT_MODAL = 3
+#     PRE_VERIFY = 8
+#     IN_MODAL_VERIFY = 3
+#     IN_SELECT_STALL = 30
+#     PAGE_LOAD_WAIT = 10
+#     WAIT_UNTIL_LOADED = 20
+#     POST_ACTIVATE_SETTING_BOX = 10
+
 def keys_match(a: str, b: str):
     """check if two filter list names are the same, ignoring aliases
 
@@ -54,7 +76,7 @@ def activate_all(webdriver):
     """
     )
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     all_checked = webdriver.execute_script(
         """
@@ -113,11 +135,11 @@ def activate_by_names_in_group(webdriver, titles: list[str]):
 
     webdriver.execute_script(script_template, titles)
 
-    time.sleep(3)
+    time.sleep(DELAYS.POST_ACTIVATE_SCRIPT)
 
     accept_modal(webdriver)
 
-    time.sleep(2)
+    time.sleep(DELAYS.POST_ACCEPT_MODAL)
 
     current_activations = get_activations_in_current_group(webdriver)
 
@@ -132,6 +154,8 @@ def activate_by_names_in_group(webdriver, titles: list[str]):
 
 def verify_selected(webdriver, extension_id: str, names: list[str] | bool):
     """Verify that the filter lists are selected as expected"""
+    
+    time.sleep(DELAYS.PRE_VERIFY)
 
     names_lower_case = (
         [name.lower() for name in names] if isinstance(names, list) else []
@@ -141,8 +165,6 @@ def verify_selected(webdriver, extension_id: str, names: list[str] | bool):
         inconsistencies = {}
     else:
         inconsistencies = {name: "NOT FOUND" for name in names_lower_case}
-
-    time.sleep(4)
 
     for group in range(1, 8):
         webdriver.get(
@@ -220,14 +242,14 @@ def accept_modal(webdriver):
             print("No accept button found")
             raise ValueError("No accept button found")
 
-        time.sleep(1)
+        time.sleep(DELAYS.IN_MODAL_VERIFY)
 
 
 def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
     """Select filter lists by name"""
 
     if not names:
-        time.sleep(15)
+        time.sleep(DELAYS.IN_SELECT_STALL)
         return
 
     select_all = isinstance(names, bool) and names
@@ -239,8 +261,8 @@ def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
             f"chrome-extension://{extension_id}/pages/options.html#filters?group={group}"
         )
 
-        time.sleep(3)
-        wait_until_loaded(webdriver, 10)
+        time.sleep(DELAYS.PAGE_LOAD_WAIT)
+        wait_until_loaded(webdriver, DELAYS.WAIT_UNTIL_LOADED)
 
         # activate the group first
         title_container_setting_box = webdriver.find_element(
@@ -260,7 +282,7 @@ def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
                 By.CLASS_NAME, "checkbox__label"
             ).click()
 
-            time.sleep(5)
+            time.sleep(DELAYS.POST_ACTIVATE_SETTING_BOX)
             # check if a modal for confirmation is displayed
             accept_modal(webdriver)
 
@@ -315,7 +337,7 @@ def select_by_names(webdriver, extension_id: str, names: list[str] | bool):
                         print("CHECKING", title)
                     elem.find_element(By.CLASS_NAME, "checkbox__label").click()
 
-                    time.sleep(2)
+                    time.sleep(DELAYS.POST_ACTIVATE_SETTING_BOX)
                     # check if a modal for confirmation is displayed
 
                     accept_modal(webdriver)
