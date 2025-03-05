@@ -105,9 +105,10 @@ def main():
 
     # RUNNING 4 DOCKERS ON 4 DIFFERENT CPU CORES
     # cpus_list = ['0','1','2','3']
-    cpus_list = [str(cpu) for cpu in range(int(args.cpus))]
+    n_cpus = min(len(domains), int(args.cpus))
+    cpus_list = [str(cpu) for cpu in range(n_cpus)]
     thread_list = []
-    domain_set = list(divide_chunks(domains, int(len(domains) / len(cpus_list))))
+    domain_set = list(divide_chunks(domains, int(len(domains) / n_cpus)))
     print(domain_set)
     for i in range(len(cpus_list)):
         thread_list.append(
