@@ -86,7 +86,7 @@ fingerprint.issues_fp=<path-to-dir-containing-issues-confs-csv>
 ```
 
 This will create 
-- a copy of the issues csv into `issues_confs_identified.csv` with a new column `identifiable_lists` containing the lists that are identifiable by the attack.
+- a copy of the issues csv into `data/filterlists/<adblocker>/fingerprint/<attack-name>/issues_confs_identified.csv` with a new column `identifiable_lists` containing the lists that are identifiable by the attack.
 - a csv file containing the encoded activated rule set for each issue in `user_rules.csv` representing a fingerprinting vector.
 
 ### II.2 Running Fingerprinting Attacks (Outcome F)
