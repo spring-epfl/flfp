@@ -242,7 +242,7 @@ def get_identifiable_list_rules(
         rules = lists
 
     if return_as_string:
-        return [l.rule.values.tolist() for l in lists]
+        return [l.rule.values.tolist() for l in rules]
     else:
         return rules
 
