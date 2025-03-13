@@ -57,7 +57,6 @@ COPY conf /flfp/conf
 COPY scripts /flfp/scripts
 COPY src /flfp/src
 COPY tests /flfp/tests
-COPY .env /flfp/.env
 
 WORKDIR /flfp
 
