@@ -11,74 +11,6 @@ import sys
 from tqdm import tqdm
 from pathlib import Path
 
-# get the datapath from the command line
-if len(sys.argv) < 3:
-    print("Usage: python3 process_cpu_data.py <data_path> <output_path>")
-    sys.exit(1)
-
-DATA_PATH = Path(sys.argv[1])
-
-if not os.path.exists(DATA_PATH) or not os.path.isdir(DATA_PATH):
-    print("Invalid path")
-    sys.exit(1)
-
-OUTPUT_PATH = Path(sys.argv[2])
-
-# check if directory is not empty or is a file
-if os.path.exists(OUTPUT_PATH):
-    if os.path.isfile(OUTPUT_PATH):
-        print("Invalid output path")
-        sys.exit(1)
-    elif len(os.listdir(OUTPUT_PATH)) > 0:
-        print("Output path is not empty")
-        sys.exit(1)
-
-OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
-
-plt.style.use(
-    {
-        "axes.spines.left": True,
-        "axes.spines.bottom": True,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "xtick.bottom": True,
-        "ytick.left": True,
-        "axes.grid": True,
-        "grid.linestyle": ":",
-        "grid.linewidth": 0.5,
-        "grid.alpha": 0.5,
-        "grid.color": "k",
-        "axes.edgecolor": "k",
-        "axes.linewidth": 0.5,
-    }
-)
-
-# # use serif font
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
-
-# # change text scaling
-plt.rcParams.update({"font.size": 12})
-
-# gray scale colors
-plt.rcParams["axes.prop_cycle"] = plt.cycler(
-    color=[
-        "#000000",
-        "#999999",
-        "#666666",
-        "#333333",
-        "#666666",
-        "#999999",
-        "#000000",
-    ]
-)
-
-
-RULE_COUNTS = {
-    "adguard": {"default": "1k", "mid": "4k", "all": "8k"},
-    "ublock": {"default": "2k", "mid": "6k", "all": "7k"},
-}
-
 
 def sort(feature_dict):
     zipped = zip(
@@ -167,7 +99,7 @@ def generate_stats_dict(data_dict):
         plt.ylabel("Additional Page Load Time (%)")
         plt.yscale("log")
 
-        plt.show()
+        # plt.show()
         plt.savefig(OUTPUT_PATH / f"stat_{extn}.pdf", bbox_inches="tight")
 
         # print the medians
@@ -176,40 +108,6 @@ def generate_stats_dict(data_dict):
         for fl in fl_lst:
             print(f"{fl}: {np.median(ret[extn][fl])} ({np.std(ret[extn][fl])})")
     return ret
-
-
-# list of all files in /data folder
-path = str(DATA_PATH.absolute()) + "/"
-dir_list = os.listdir(path)
-
-extn_lst = ["control", "ublock", "adguard"]
-
-fl_lst = ["default", "mid", "all"]
-
-data_dict = {"websites": []}
-
-for extn in extn_lst:
-    data_dict[extn] = (
-        {}
-    )  # data_dict = {'websites': [list_of_websites], 'extn_lst[i]': [list of [usr, sys, iowait, stats]]}
-
-    if extn == "control":
-        data_dict[extn]["default"] = []
-    else:
-        for fl in fl_lst:
-            data_dict[extn][fl] = []
-
-
-faulty_sites = defaultdict(dict)
-# faulty_extn = {}
-for extn in extn_lst:
-    faulty_sites[extn] = {}
-
-    if extn == "control":
-        faulty_sites[extn]["default"] = []
-    else:
-        for fl in fl_lst:
-            faulty_sites[extn][fl] = []
 
 
 def check_for_keys(website_data, website):
@@ -254,170 +152,10 @@ def check_for_keys(website_data, website):
     # progressbar.close()
 
 
-# load all the data from the files in 1 dictionary
-all_data = {}
-
-
-def load_website(website):
+def load_website(args):
+    path, website = args
     with open(path + website, "r") as f:
         return {**json.load(f)}
-
-
-site_data = []
-
-with Pool(12) as p:
-    site_data = list(tqdm(p.imap(load_website, dir_list), total=len(dir_list)))
-
-all_data = dict(zip(dir_list, site_data))
-
-# populate the faulty_sites dict
-for website in all_data:
-    check_for_keys(all_data[website]["stats"], website)
-
-faulty_num = {}
-for extn in extn_lst[1:]:
-
-    faulty_num[extn] = {}
-
-    for fl in fl_lst:
-        faulty_num[extn][fl] = 0
-
-for website in dir_list:
-    # control case
-    key = "/data/" + website
-    data = all_data[website]
-
-    if website in faulty_sites["control"]["default"]:
-        continue
-    for extn in extn_lst[1:]:
-
-        for fl in fl_lst:
-            if website in faulty_sites[extn][fl]:
-                data["stats"][extn] = data["stats"].get(extn, {})
-                data["stats"][extn][fl] = {"webStats": [-1, -1]}
-
-    data_dict["websites"].append(website)
-
-    try:
-        usr_c = data["stats"][key]["default"]["usr"]
-        sys_c = data["stats"][key]["default"]["sys"]
-        iowait_c = data["stats"][key]["default"]["iowait"]
-        webStats_c = data["stats"][key]["default"]["webStats"]
-        data_dict["control"] = data_dict.get("control", {})
-        data_dict["control"]["default"].append([usr_c, sys_c, iowait_c, webStats_c])
-    except KeyError as k:
-        # print(website, k, "- dropping website")
-        faulty_sites += 1
-        data_dict["websites"] = data_dict["websites"][:-1]
-        continue
-
-    # extn case
-    for extn in extn_lst[1:]:  # opting out the 'control' case
-        for fl in fl_lst:
-            key = extn
-            try:
-                usr = data["stats"][key][fl]["usr"]
-                syst = data["stats"][key][fl]["sys"]
-                iowait = data["stats"][key][fl]["iowait"]
-                webStats = data["stats"][key][fl]["webStats"]
-                data_dict[extn] = data_dict.get(extn, {})
-                data_dict[extn][fl].append([usr, syst, iowait, webStats])
-            except KeyError as k:
-                usr = usr_c
-                syst = sys_c
-                iowait = iowait_c
-                webStats = webStats_c
-                data_dict[extn] = data_dict.get(extn, {})
-                data_dict[extn][fl].append([usr, syst, iowait, webStats])
-                faulty_num[extn][fl] += 1
-                # print(website, extn,  k)
-                pass
-
-print(faulty_num)  # manually removed the 0.0 extries corresponding to the number here
-
-max_plot = [{}, {}, {}]  # for usr, sys, iowait
-avg_plot = [{}, {}, {}]
-stat_plot = [{}, {}]
-
-for i in range(4):  # initialization
-    for extn in data_dict:
-
-        if extn not in extn_lst:
-            continue
-
-        for fl in data_dict[extn]:
-
-            if extn == "control" and fl != "default":
-                continue
-
-            if extn != "websites":
-                if i == 3:
-                    stat_plot[0][extn] = stat_plot[0].get(extn, {})
-                    stat_plot[1][extn] = stat_plot[1].get(extn, {})
-                    stat_plot[0][extn][fl] = []
-                    stat_plot[1][extn][fl] = []
-                else:
-                    max_plot[i][extn] = max_plot[i].get(extn, {})
-                    avg_plot[i][extn] = avg_plot[i].get(extn, {})
-                    max_plot[i][extn][fl] = []
-                    avg_plot[i][extn][fl] = []
-
-for i in range(len(data_dict["control"]["default"])):
-    for extn in data_dict:
-
-        if extn not in extn_lst:
-            continue
-
-        for fl in data_dict[extn]:
-
-            if extn == "control" and fl != "default":
-                continue
-
-            for j in range(4):
-                if extn != "websites":
-
-                    if j == 3:
-                        # # filter out -1 values from stat_plot
-                        # if data_dict[extn][i][j][0] == -1 or data_dict[extn][i][j][1] == -1:
-                        #     continue
-
-                        stat_plot[0][extn][fl].append(data_dict[extn][fl][i][j][0])
-                        stat_plot[1][extn][fl].append(data_dict[extn][fl][i][j][1])
-                    else:
-
-                        try:
-                            # max
-                            max_plot[j][extn][fl].append(max(data_dict[extn][fl][i][j]))
-
-                            # avg
-                            avg_plot[j][extn][fl].append(
-                                sum(data_dict[extn][fl][i][j][:-3])
-                                / len(data_dict[extn][fl][i][j][:-3])
-                            )  # can do [:-1] so that last entry can be ignored (which would mostly be close to 0) bcoz I did run mpstat for 5 extra cycle
-                        except Exception as e:
-                            print(e, extn, fl, i, j)
-                            print(data_dict[extn][fl][i])
-
-                            raise e
-
-
-# generate_stats_dict(data_dict)
-
-avg_np = {}
-max_np = {}
-for extn in extn_lst:
-
-    for fl in fl_lst:
-
-        if extn == "control" and fl != "default":
-            continue
-
-        avg_np[extn] = avg_np.get(extn, {})
-        max_np[extn] = max_np.get(extn, {})
-        avg_np[extn][fl] = np.array(avg_plot[0][extn][fl])  # 0 - usr, 1 - sys
-        max_np[extn][fl] = np.array(max_plot[0][extn][fl])  # 0 - usr, 1 - sys
-        # sys_avg[extn] = np.array(avg_plot[1][extn]) # 0 - usr, 1 - sys
-        # sys_max[extn] = np.array(max_plot[1][extn]) # 0 - usr, 1 - sys
 
 
 def plot_max():
@@ -463,7 +201,7 @@ def plot_max():
             plt.ylabel("CPU Usage (%)")
             # plt.yscale('log')
 
-            plt.show()
+            # plt.show()
             plt.savefig(OUTPUT_PATH / f"max_{extn}.pdf")
 
 
@@ -508,7 +246,7 @@ def plot_avg():
             plt.ylabel("CPU Usage (%)")
             # plt.yscale('log')
 
-            plt.show()
+            # plt.show()
             plt.savefig(OUTPUT_PATH / f"avg_{extn}.pdf")
 
             # print the medians
@@ -518,65 +256,6 @@ def plot_avg():
                 print(
                     f"{fl}: {np.median(avg_np[extn][fl] - avg_np['control']['default'])} ({np.std(avg_np[extn][fl] - avg_np['control']['default'])})"
                 )
-
-
-plot_max()
-plot_avg()
-
-ret_data = defaultdict(dict)
-usr_max = defaultdict(dict)
-usr_avg = defaultdict(dict)
-sys_max = defaultdict(dict)
-sys_avg = defaultdict(dict)
-cpu_avg = defaultdict(dict)
-load_time = defaultdict(dict)
-
-# print(np.max(avg_plot[0]['control']))
-# print(np.min(avg_plot[0]['control']))
-
-progressbar = tqdm(total=len(extn_lst) * len(fl_lst), desc="Generating Statistics")
-for extn in extn_lst[1:]:
-
-    for fl in fl_lst:
-
-        usr_max[extn][fl] = np.sort(
-            np.array(max_plot[0][extn][fl])
-            - np.array(max_plot[0]["control"]["default"])
-        )
-        usr_avg[extn][fl] = np.sort(
-            np.array(avg_plot[0][extn][fl])
-            - np.array(avg_plot[0]["control"]["default"])
-        )
-        sys_max[extn][fl] = np.sort(
-            np.array(max_plot[1][extn][fl])
-            - np.array(max_plot[1]["control"]["default"])
-        )
-        sys_avg[extn][fl] = np.sort(
-            np.array(avg_plot[1][extn][fl])
-            - np.array(avg_plot[1]["control"]["default"])
-        )
-        cpu_avg[extn][fl] = np.sort(
-            np.array(avg_plot[0][extn][fl])
-            + np.array(avg_plot[1][extn][fl])
-            - np.array(avg_plot[0]["control"]["default"])
-        )
-
-        progressbar.update(1)
-
-progressbar.close()
-
-ret_data["usr_max"] = usr_max
-ret_data["usr_avg"] = usr_avg
-ret_data["sys_max"] = sys_max
-ret_data["sys_avg"] = sys_avg
-ret_data["cpu_avg"] = cpu_avg
-ret_data["load_time"] = generate_stats_dict(data_dict)
-
-with open(OUTPUT_PATH / "plot_performance.json", "w") as f:
-    json.dump(ret_data, f, cls=NpEncoder)
-
-
-# Plot the faulty site distribution across filter lists
 
 
 def plot_faulty_sites():
@@ -641,7 +320,326 @@ def plot_faulty_sites():
         print(matrix)
 
 
-plot_faulty_sites()
+if __name__ == "__main__":
 
+    # get the datapath from the command line
+    if len(sys.argv) < 3:
+        print("Usage: python3 process_cpu_data.py <data_path> <output_path>")
+        sys.exit(1)
 
-sys.exit(0)
+    DATA_PATH = Path(sys.argv[1])
+
+    if not os.path.exists(DATA_PATH) or not os.path.isdir(DATA_PATH):
+        print("Invalid path")
+        sys.exit(1)
+
+    OUTPUT_PATH = Path(sys.argv[2])
+
+    # check if directory is not empty or is a file
+    if os.path.exists(OUTPUT_PATH):
+        if os.path.isfile(OUTPUT_PATH):
+            print("Invalid output path")
+            sys.exit(1)
+        elif len(os.listdir(OUTPUT_PATH)) > 0:
+            print("Output path is not empty")
+            sys.exit(1)
+
+    OUTPUT_PATH.mkdir(parents=True, exist_ok=True)
+
+    plt.style.use(
+        {
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "xtick.bottom": True,
+            "ytick.left": True,
+            "axes.grid": True,
+            "grid.linestyle": ":",
+            "grid.linewidth": 0.5,
+            "grid.alpha": 0.5,
+            "grid.color": "k",
+            "axes.edgecolor": "k",
+            "axes.linewidth": 0.5,
+        }
+    )
+
+    # # use serif font
+    plt.rcParams["font.family"] = "serif"
+    plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
+
+    # # change text scaling
+    plt.rcParams.update({"font.size": 12})
+
+    # gray scale colors
+    plt.rcParams["axes.prop_cycle"] = plt.cycler(
+        color=[
+            "#000000",
+            "#999999",
+            "#666666",
+            "#333333",
+            "#666666",
+            "#999999",
+            "#000000",
+        ]
+    )
+
+    RULE_COUNTS = {
+        "adguard": {"default": "1k", "mid": "4k", "all": "8k"},
+        "ublock": {"default": "2k", "mid": "6k", "all": "7k"},
+    }
+
+    # list of all files in /data folder
+    path = str(DATA_PATH.absolute()) + "/"
+    dir_list = os.listdir(path)
+
+    extn_lst = ["control", "ublock", "adguard"]
+
+    fl_lst = ["default", "mid", "all"]
+
+    data_dict = {"websites": []}
+
+    for extn in extn_lst:
+        data_dict[extn] = (
+            {}
+        )  # data_dict = {'websites': [list_of_websites], 'extn_lst[i]': [list of [usr, sys, iowait, stats]]}
+
+        if extn == "control":
+            data_dict[extn]["default"] = []
+        else:
+            for fl in fl_lst:
+                data_dict[extn][fl] = []
+
+    faulty_sites = defaultdict(dict)
+    # faulty_extn = {}
+    for extn in extn_lst:
+        faulty_sites[extn] = {}
+
+        if extn == "control":
+            faulty_sites[extn]["default"] = []
+        else:
+            for fl in fl_lst:
+                faulty_sites[extn][fl] = []
+
+    # load all the data from the files in 1 dictionary
+    all_data = {}
+
+    site_data = []
+
+    with Pool(12) as p:
+        site_data = list(tqdm(p.imap(load_website, zip([path] * len(dir_list), dir_list)), total=len(dir_list)))
+
+    all_data = dict(zip(dir_list, site_data))
+
+    # populate the faulty_sites dict
+    for website in all_data:
+        check_for_keys(all_data[website]["stats"], website)
+
+    faulty_num = {}
+    for extn in extn_lst[1:]:
+
+        faulty_num[extn] = {}
+
+        for fl in fl_lst:
+            faulty_num[extn][fl] = 0
+
+    for website in dir_list:
+        # control case
+        key = "/data/" + website
+        data = all_data[website]
+
+        if website in faulty_sites["control"]["default"]:
+            continue
+        for extn in extn_lst[1:]:
+
+            for fl in fl_lst:
+                if website in faulty_sites[extn][fl]:
+                    data["stats"][extn] = data["stats"].get(extn, {})
+                    data["stats"][extn][fl] = {"webStats": [-1, -1]}
+
+        data_dict["websites"].append(website)
+
+        try:
+            usr_c = data["stats"][key]["default"]["usr"]
+            sys_c = data["stats"][key]["default"]["sys"]
+            iowait_c = data["stats"][key]["default"]["iowait"]
+            webStats_c = data["stats"][key]["default"]["webStats"]
+            data_dict["control"] = data_dict.get("control", {})
+            data_dict["control"]["default"].append([usr_c, sys_c, iowait_c, webStats_c])
+        except KeyError as k:
+            # print(website, k, "- dropping website")
+            faulty_sites += 1
+            data_dict["websites"] = data_dict["websites"][:-1]
+            continue
+
+        # extn case
+        for extn in extn_lst[1:]:  # opting out the 'control' case
+            for fl in fl_lst:
+                key = extn
+                try:
+                    usr = data["stats"][key][fl]["usr"]
+                    syst = data["stats"][key][fl]["sys"]
+                    iowait = data["stats"][key][fl]["iowait"]
+                    webStats = data["stats"][key][fl]["webStats"]
+                    data_dict[extn] = data_dict.get(extn, {})
+                    data_dict[extn][fl].append([usr, syst, iowait, webStats])
+                except KeyError as k:
+                    usr = usr_c
+                    syst = sys_c
+                    iowait = iowait_c
+                    webStats = webStats_c
+                    data_dict[extn] = data_dict.get(extn, {})
+                    data_dict[extn][fl].append([usr, syst, iowait, webStats])
+                    faulty_num[extn][fl] += 1
+                    # print(website, extn,  k)
+                    pass
+
+    print(
+        faulty_num
+    )  # manually removed the 0.0 extries corresponding to the number here
+
+    max_plot = [{}, {}, {}]  # for usr, sys, iowait
+    avg_plot = [{}, {}, {}]
+    stat_plot = [{}, {}]
+
+    for i in range(4):  # initialization
+        for extn in data_dict:
+
+            if extn not in extn_lst:
+                continue
+
+            for fl in data_dict[extn]:
+
+                if extn == "control" and fl != "default":
+                    continue
+
+                if extn != "websites":
+                    if i == 3:
+                        stat_plot[0][extn] = stat_plot[0].get(extn, {})
+                        stat_plot[1][extn] = stat_plot[1].get(extn, {})
+                        stat_plot[0][extn][fl] = []
+                        stat_plot[1][extn][fl] = []
+                    else:
+                        max_plot[i][extn] = max_plot[i].get(extn, {})
+                        avg_plot[i][extn] = avg_plot[i].get(extn, {})
+                        max_plot[i][extn][fl] = []
+                        avg_plot[i][extn][fl] = []
+
+    for i in range(len(data_dict["control"]["default"])):
+        for extn in data_dict:
+
+            if extn not in extn_lst:
+                continue
+
+            for fl in data_dict[extn]:
+
+                if extn == "control" and fl != "default":
+                    continue
+
+                for j in range(4):
+                    if extn != "websites":
+
+                        if j == 3:
+                            # # filter out -1 values from stat_plot
+                            # if data_dict[extn][i][j][0] == -1 or data_dict[extn][i][j][1] == -1:
+                            #     continue
+
+                            stat_plot[0][extn][fl].append(data_dict[extn][fl][i][j][0])
+                            stat_plot[1][extn][fl].append(data_dict[extn][fl][i][j][1])
+                        else:
+
+                            try:
+                                # max
+                                max_plot[j][extn][fl].append(
+                                    max(data_dict[extn][fl][i][j])
+                                )
+
+                                # avg
+                                avg_plot[j][extn][fl].append(
+                                    sum(data_dict[extn][fl][i][j][:-3])
+                                    / len(data_dict[extn][fl][i][j][:-3])
+                                )  # can do [:-1] so that last entry can be ignored (which would mostly be close to 0) bcoz I did run mpstat for 5 extra cycle
+                            except Exception as e:
+                                print(e, extn, fl, i, j)
+                                print(data_dict[extn][fl][i])
+
+                                raise e
+
+    # generate_stats_dict(data_dict)
+
+    avg_np = {}
+    max_np = {}
+    for extn in extn_lst:
+
+        for fl in fl_lst:
+
+            if extn == "control" and fl != "default":
+                continue
+
+            avg_np[extn] = avg_np.get(extn, {})
+            max_np[extn] = max_np.get(extn, {})
+            avg_np[extn][fl] = np.array(avg_plot[0][extn][fl])  # 0 - usr, 1 - sys
+            max_np[extn][fl] = np.array(max_plot[0][extn][fl])  # 0 - usr, 1 - sys
+            # sys_avg[extn] = np.array(avg_plot[1][extn]) # 0 - usr, 1 - sys
+            # sys_max[extn] = np.array(max_plot[1][extn]) # 0 - usr, 1 - sys
+
+    plot_max()
+    plot_avg()
+
+    ret_data = defaultdict(dict)
+    usr_max = defaultdict(dict)
+    usr_avg = defaultdict(dict)
+    sys_max = defaultdict(dict)
+    sys_avg = defaultdict(dict)
+    cpu_avg = defaultdict(dict)
+    load_time = defaultdict(dict)
+
+    # print(np.max(avg_plot[0]['control']))
+    # print(np.min(avg_plot[0]['control']))
+
+    progressbar = tqdm(total=len(extn_lst) * len(fl_lst), desc="Generating Statistics")
+    for extn in extn_lst[1:]:
+
+        for fl in fl_lst:
+
+            usr_max[extn][fl] = np.sort(
+                np.array(max_plot[0][extn][fl])
+                - np.array(max_plot[0]["control"]["default"])
+            )
+            usr_avg[extn][fl] = np.sort(
+                np.array(avg_plot[0][extn][fl])
+                - np.array(avg_plot[0]["control"]["default"])
+            )
+            sys_max[extn][fl] = np.sort(
+                np.array(max_plot[1][extn][fl])
+                - np.array(max_plot[1]["control"]["default"])
+            )
+            sys_avg[extn][fl] = np.sort(
+                np.array(avg_plot[1][extn][fl])
+                - np.array(avg_plot[1]["control"]["default"])
+            )
+            cpu_avg[extn][fl] = np.sort(
+                np.array(avg_plot[0][extn][fl])
+                + np.array(avg_plot[1][extn][fl])
+                - np.array(avg_plot[0]["control"]["default"])
+            )
+
+            progressbar.update(1)
+
+    progressbar.close()
+
+    ret_data["usr_max"] = usr_max
+    ret_data["usr_avg"] = usr_avg
+    ret_data["sys_max"] = sys_max
+    ret_data["sys_avg"] = sys_avg
+    ret_data["cpu_avg"] = cpu_avg
+    ret_data["load_time"] = generate_stats_dict(data_dict)
+
+    with open(OUTPUT_PATH / "plot_performance.json", "w") as f:
+        json.dump(ret_data, f, cls=NpEncoder)
+
+    # Plot the faulty site distribution across filter lists
+
+    plot_faulty_sites()
+
+    sys.exit(0)
