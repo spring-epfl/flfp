@@ -13,7 +13,7 @@ We also provide pre-scraped and computed datasets in https://zenodo.org/records/
 
 
 # System Requirements
-All pieces of code should be able to run on any modern operating system (Windows, Linux, MacOS) with Python 3.10 or higher installed. The code has been tested on Ubuntu 20.04 LTS and MacOS 14.2. 
+All pieces of code can run on the Linux operating system with Python 3.10 or higher installed. The code has been tested on Ubuntu 20.04 LTS. Component A runs also on MacOS 14.2 (Not advised).
 
 To make it easy to reproduce, we try to offer Dockerfile methods where possible. We recommend using Docker to run the experiments where indicated. Further details are provided in the corresponding source code instructions.
 
@@ -78,7 +78,7 @@ If you use the code/data in your research, please cite our work as follows:
 ```bibtex
 @inproceedings{ElHajjChehade25FLFP,
   title     = {Double-Edged Shield: On the Fingerprintability of Customized Ad Blockers},
-  author    = {Saiid El Hajj Chehade, Ben Stock, Carmela Troncoso},
+  author    = {El Hajj Chehade, Saiid AND Stock, Ben AND Troncoso, Carmela},
   booktitle = {USENIX Security Symposium (USENIX)},
   year      = {2025}
 }
