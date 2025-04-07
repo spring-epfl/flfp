@@ -1,4 +1,4 @@
-from zipp import Path
+from pathlib import Path
 import numpy as np
 
 def get_attack_names(conf_dir: Path):

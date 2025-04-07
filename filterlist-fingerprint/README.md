@@ -1,6 +1,6 @@
 # Double-Edged Shield: On the Fingerprintability of Customized Ad Blockers
 
-Project to explore the use of AdBlocker filterlists to fingerprint users.
+Project to explore the use of AdBlocker filter-lists to fingerprint users.
 
 ## Pre-requisites
 - Python 3.X

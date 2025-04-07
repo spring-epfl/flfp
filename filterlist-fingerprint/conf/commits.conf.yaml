@@ -8,7 +8,7 @@ defaults:
   - filterlists: adguard
   - forum: adguard
 
-pages_limit: null # Number of commits to scrape 100 per page * 170 pages = 17000 commits
+pages_limit: 1 # Number of commits to scrape 100 per page * 170 pages = 17000 commits
 date_limit: null # Date limit for commits to scrape after this date
 overwrite: False # Overwrite existing commits
 action: history

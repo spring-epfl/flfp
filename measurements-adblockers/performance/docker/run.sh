@@ -11,14 +11,14 @@ if [ "$#" -ne 5 ]; then
     exit 1
 fi
 
-SELFPATH=$(dirname $(realpath "$0"))
+SELFPATH=$(dirname "$(realpath "$0")")
 LOGS=$(realpath "${1}")
 DOMAINS_LIST=$(realpath "${2}")
 METRIC=${3}
 CPUS=${4}
 BROWSER=${5}
 
-mkdir -p ${LOGS}
+mkdir -p "${LOGS}"
 
 # if [ "${3}" = "cpu" ] || [ "${3}" = "ram" ]; then 
 #     echo "Testing for Metric ${METRIC}"
@@ -28,7 +28,7 @@ mkdir -p ${LOGS}
 # fi 
 
 if [ "${5}" = "chrome" ] || [ "${5}" = "firefox" ]; then 
-    echo "Testing on Browser ${Browser}"
+    echo "Testing on Browser ${BROWSER}"
 else 
     echo "Browser not in chrome|firefox"
     exit 0
@@ -55,8 +55,8 @@ source ./measure/bin/activate
 UUID=$(uuidgen -t)
 echo "Starting measurement run '${UUID}' at $(date)"
 python3 "${METRIC}_wrapper.py" \
-${LOGS}/${UUID}.log \
-${DOMAINS_LIST} \
-${CPUS} \
-${BROWSER}
+"${LOGS}"/"${UUID}".log \
+"${DOMAINS_LIST}" \
+"${CPUS}" \
+"${BROWSER}"
 echo "Completed measurement run '${UUID}' at $(date)"

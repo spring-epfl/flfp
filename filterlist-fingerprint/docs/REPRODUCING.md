@@ -5,12 +5,13 @@ We can divide the flow to produce the results into three consecutive steps:
 - **(II) Data Processing**: Process the data to compute the fingerprints, stability results, and other intermediate representations. 
 - **(III) Statistics and Figures**: Analyze the data and produce the results appearing in the paper.
 
-We recognize four experimental outcomes:
-- (F) **Fingerprinting Study**: Study the power of different attacks to uniquely identify filter lists and users (Paper Sections 6.1 and 6.2).
-- (S) **Stability Study**: Study the stability of the filter lists over time and the fingerprinting templates accordingly (Paper Section 6.3).
-- (D) **Domain Coverage Study**: Study the domain coverage required by attackers to gain advantage (Paper Section 6.4).
-- (R) **Robustness to Mitigations Study**: Study the robustness of filter-list fingerprints to mitigations (Paper Section 7.2).
-
+In the paper, we showcase 7 major claims (listed in the artifact appendix). We use the experimental code below to verify 6 of these claims. Some commands and steps are only required for specific claims, so they can be skipped if we mentioned "only required for claim X" or specify the claims associated and you are not interested in exploring that claim. The following are the claims:
+- **(C1) Filter-list Coverage**: A substantial decrease in filter-rule coverage does not lead to a strong reduction in filter-list coverage (Paper Section 6.1).
+- **(C2.1) Fingerprinting Power**: The fingerprinting power of the filter-lists on users is high (Paper Section 6.2).
+- **(C2.2) Privacy-users anonymity risk**: The higher the degree of ad-blocker customization, the smaller the anonymity set of the privacy-conscious user is. (Paper Section 6.2).
+- **(C3) Stability**: The filter-lists are stable over time (Paper Section 6.3).
+- **(C4) Domain Coverage**: The domain coverage required to identify a filter-list is small (Paper Section 6.4).
+- **(C5) Robustness to Mitigations**: The filter-list fingerprints are robust to mitigations (Paper Section 7.2).
 
 For each step, we can provide precomputed data as input (`data.zip`) which can be extracted to fill `./data` folder. However, we also provide the scripts to reproduce all data from scratch.
 
@@ -44,16 +45,16 @@ We can also provide a **Docker image** with pre-installed dependencies to run th
 
 ## (I) Data Collection
 
-This steps collects the data from the internet. If you intend to reproduce this data, you might find variations that depend on the dataset parameters you choose (e.g. the number of forum issues, the date range, etc.).
+This step collects the data from the internet. If you intend to reproduce this data, you might find variations that depend on the dataset parameters you choose (e.g. the number of forum issues, the date range, etc.).
 
 The following table contains the source data to download and instructions to download them. 
 
 | Data Source | Description | Pre-Download Instructions |  Download Script | Download Options | Output Folder | Post-Download Instructions |
 | --- | --- | --- | --- | --- | --- | --- |
-| Github Issues | github issues to get the configurations of the filterlists | - | `python scripts/run/issues.py forum=<adblocker>` | Override options from [issues.conf.yaml](../conf/issues.conf.yaml) in the command like date range or page limit. **We recommend you define at least `pages_limit` or `date_limit`  | `data/issues/<adblocker>/<timestamp>/issues_confs.csv` | Update `<adblocker>_CONFS_DIR` `scripts/paper_stats/common.py`<br/><br/> If the adblocker is `ublock`, deduplicate posts with `python scripts/run/issues.py forum=ublock +forum.dedup_from=<downloaded-ublock-issues-dir>`, then update `UBLOCK_DEDUP_CONFS_DIR` with the same dir in the command.  |
+| Github Issues | github issues to get the configurations of the filter-lists | - | `python scripts/run/issues.py forum=<adblocker>` | Override options from [issues.conf.yaml](../conf/issues.conf.yaml) in the command like date range or page limit. **We recommend you define at least `pages_limit` or `date_limit`  | `data/issues/<adblocker>/<timestamp>/issues_confs.csv` | Update `<adblocker>_CONFS_DIR` `scripts/paper_stats/common.py`<br/><br/> If the adblocker is `ublock`, deduplicate posts with `python scripts/run/issues.py forum=ublock +forum.dedup_from=<downloaded-ublock-issues-dir>`, then update `UBLOCK_DEDUP_CONFS_DIR` with the same directory in the command.  |
 | Filterlists | filterlist files containing rules | - | `python scripts/run/filterlists.py action=download filterlists=<adblocker>` | - | `data/filterlists/<adblocker>/download/default` | Parse the rules and extract their metadata using <br> `python scripts/run/filterlists.py action=parse filterlists=<adblocker> parse.download_fp=<path-to-download-dir>` | 
-| Github Commits | Only required for outcome S. Ad-blocker rule changes commit history | - |  `python scripts/run/commits.py action=scrape forum=<adblocker> filterlists=<adblocker>` | Override options from [commits.conf.yaml](../conf/commits.conf.yaml) in the command like date range or page limit| `data/commits/<adblocker>/scrape/<timestamp>/changes.csv` | Parse commits `python scripts/run/commits.py forum=<adblocker> filterlists=<adblocker> action=parse parse.scrape_fp=<commits-scrape-path>`. Update `<adblocker>_COMMITS_FP` in `scripts/paper_stats/common.py` |
-| Rule Last Seen | Only required for outcome S. measuring the last time a filter rule is seen. Depends on the *Filterlists* data. | Requires having **(II) Data Processing** and attack summaries | `python scripts/run/commits.py forum=<adblocker> filterlists=<adblocker> action=history filterlists=<adblocker>` | Override options from [commits.conf.yaml](../conf/commits.conf.yaml) in the command like time intervals `history.deltas` or attack type `attack_type=null\|targeted\|general`| `data/commits/<adblocker>/history/<timestamp>/` | Update `scripts/paper_stats/common.py` with the correct path and timestamp `<adblocker>_RULE_LAST_SEEN_DOWNLOAD_TIMESTAMP` and `<adblocker>_RULE_LAST_SEEN_FP` |
+| Github Commits | Only required for C3. Ad-blocker rule changes commit history | - |  `python scripts/run/commits.py action=scrape forum=<adblocker> filterlists=<adblocker>` | Override options from [commits.conf.yaml](../conf/commits.conf.yaml) in the command like date range or page limit| `data/commits/<adblocker>/scrape/<timestamp>/changes.csv` | Parse commits `python scripts/run/commits.py forum=<adblocker> filterlists=<adblocker> action=parse parse.scrape_fp=<commits-scrape-path>`. Update `<adblocker>_COMMITS_FP` in `scripts/paper_stats/common.py` |
+| Rule Last Seen | Only required for C3. measuring the last time a filter rule is seen. Depends on the *Filterlists* data. | Requires having **(II) Data Processing** and attack summaries | `python scripts/run/commits.py forum=<adblocker> filterlists=<adblocker> action=history filterlists=<adblocker>` | Override options from [commits.conf.yaml](../conf/commits.conf.yaml) in the command like time intervals `history.deltas` or attack type `attack_type=null\|targeted\|general`| `data/commits/<adblocker>/history/<timestamp>/` | Update `scripts/paper_stats/common.py` with the correct path and timestamp `<adblocker>_RULE_LAST_SEEN_DOWNLOAD_TIMESTAMP` and `<adblocker>_RULE_LAST_SEEN_FP` |
 
 ## (II) Data Processing
 
@@ -82,14 +83,16 @@ To generate an attack-specific filter-list rules dataset, run the following comm
 ```bash
 python scripts/run/filterlists.py action=fingerprint filterlists=<adblocker> 
 attack=<attack-name>
-fingerprint.issues_fp=<path-to-dir-containing-issues-confs-csv>
+fingerprint.issues_fp=data/issues/<adblocker>/<timestamp>
 ```
 
-This will create 
-- a copy of the issues csv into `data/filterlists/<adblocker>/fingerprint/<attack-name>/issues_confs_identified.csv` with a new column `identifiable_lists` containing the lists that are identifiable by the attack.
-- a csv file containing the encoded activated rule set for each issue in `user_rules.csv` representing a fingerprinting vector.
+To find `<timestamp>`, look inside the `data/issues/<adblocker>/` folder (e.g., `ls -d -l data/issues/<adblocker>/*`).
 
-### II.2 Running Fingerprinting Attacks (Outcome F)
+This will create 
+- a copy of the issues CSV into `data/filterlists/<adblocker>/fingerprint/<attack-name>/issues_confs_identified.csv` with a new column `identifiable_lists` containing the lists that are identifiable by the attack.
+- a CSV file containing the encoded activated rule set for each issue in `user_rules.csv` representing a fingerprinting vector.
+
+### II.2 Running Fingerprinting Attacks (C1, C2.1, C2.2)
 
 After creating the attack-specific filter-list datasets, we can run the fingerprinting attacks to identify the filter lists and users, and compute the optimal fingerprinting templates. We adapted fingerprinting attack with size constraints methods from Gulyas et al. [1]. We implement two methods of the attack "Targeted" and "General".
 
@@ -105,7 +108,7 @@ python scripts/run/fingerprinting.py \
      attack=<attack-name> \
 ```
 
-This generates a csv file `data/fingerprinting/<adblocker>/<attack-name>filterlist/targeted/fingerprints.csv`.
+This generates a CSV file `data/fingerprinting/<adblocker>/<attack-name>filterlist/targeted/fingerprints.csv`.
 
 #### II.2.2 General Attack
 
@@ -113,13 +116,13 @@ This generates a csv file `data/fingerprinting/<adblocker>/<attack-name>filterli
 python scripts/run/fingerprinting.py -m \
     method=general \
     adblocker=<adblocker> \
-    attack=<filterlist-attack-name> \
+    attack=<attack-name> \
     general.max_size=5,10,15,20,25,30,35,40,45,50,55,60,70,80,90
 ```
 
 This generates multiple runs for different `max_size` values and stores associated fingerprint vectors in `fingerprint.json` files. You can set the values to iterate over as you wish.
 
-### II.3 Attack Summary (Outcome S)
+### II.3 Attack Summary (C1, C2.1, C2.2)
 
 To be able to run the stability study, we need to run the attack summarization script. This script will summarize the attack results that are used in the stability study.
 
@@ -131,7 +134,7 @@ python scripts/run/summarize_attack_rules.py \
 
 This generates a directory containing the summary in `data/fingerprinting/<adblocker>/<attack-name>/filterlist/summary/`.
 
-### II.4 Iterative Robustness Experiment (Outcome R)
+### II.4 Iterative Robustness Experiment (C5)
 
 To run the iterative robustness experiment, we need to run the following script:
 
@@ -145,7 +148,7 @@ This generates a directory containing the results in `data/iterative_robustness/
 
 Additional options can be set in the command line to override the default values in the configuration file [iterative_robustness.conf.yaml](../conf/iterative_robustness.conf.yaml).
 
-### II.5 Domain Coverage Study (Outcome D)
+### II.5 Domain Coverage Study (C4)
 
 To run the domain coverage study for each list of an ad-blocker, we need to run the following script:
 

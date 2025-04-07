@@ -327,13 +327,13 @@ if __name__ == "__main__":
         print("Usage: python3 process_cpu_data.py <data_path> <output_path>")
         sys.exit(1)
 
-    DATA_PATH = Path(sys.argv[1])
+    DATA_PATH = Path(sys.argv[1]).absolute().resolve()
 
     if not os.path.exists(DATA_PATH) or not os.path.isdir(DATA_PATH):
         print("Invalid path")
         sys.exit(1)
 
-    OUTPUT_PATH = Path(sys.argv[2])
+    OUTPUT_PATH = Path(sys.argv[2]).absolute().resolve()
 
     # check if directory is not empty or is a file
     if os.path.exists(OUTPUT_PATH):
